@@ -30,6 +30,15 @@ function GlobalStyle() {
 
 import { Box, Button, Text, TextField, Image } from '@skynexui/components';
 import appConfig from '../config.json'
+import Head from 'next/head';
+
+const Page = (props) => (
+  <>
+    <Head>
+      <link rel="icon" type="image/x-icon" href="/static/favicon.ico"/>
+    </Head>
+  </>
+);
 
 function Titulo(props) {
     const Texto = props.children
@@ -67,6 +76,7 @@ export default function PaginaInicial() {
 
     return (
         <>
+            <Page />
             <GlobalStyle />
             <Box
                 styleSheet={{
