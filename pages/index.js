@@ -1,43 +1,15 @@
-
-function GlobalStyle() {
-    return (
-        <style global jsx>{`
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        list-style: none;
-      }
-      body {
-        font-family: 'Open Sans', sans-serif;
-      }
-      /* App fit Height */ 
-      html, body, #__next {
-        min-height: 100vh;
-        display: flex;
-        flex: 1;
-      }
-      #__next {
-        flex: 1;
-      }
-      #__next > * {
-        flex: 1;
-      }
-      /* ./App fit Height */ 
-    `}</style>
-    );
-}
-
 import { Box, Button, Text, TextField, Image } from '@skynexui/components';
-import appConfig from '../config.json'
+import appConfig from '../config.json';
+import { useRouter } from 'next/router';
 import Head from 'next/head';
+import React from 'react';
 
 const Page = (props) => (
-  <>
-    <Head>
-      <link rel="icon" type="image/x-icon" href="/static/favicon.ico"/>
-    </Head>
-  </>
+    <>
+        <Head>
+            <link rel="icon" type="image/x-icon" href="/static/favicon.ico" />
+        </Head>
+    </>
 );
 
 function Titulo(props) {
@@ -72,17 +44,17 @@ function Titulo(props) {
 // export default HomePage
 
 export default function PaginaInicial() {
-    const username = 'peas';
+    const [username, setUsername] = React.useState('gu1rocha');
+    const roeamento = useRouter();
 
     return (
         <>
             <Page />
-            <GlobalStyle />
             <Box
                 styleSheet={{
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    backgroundColor: appConfig.theme.colors.primary[500],
-                    backgroundImage: 'url(https://virtualbackgrounds.site/wp-content/uploads/2020/08/the-matrix-digital-rain.jpg)',
+                    backgroundColor: appConfig.theme.colors.neutrals[500],
+                    backgroundImage: `url(https://github.com/${username}.png)` || '',
                     backgroundRepeat: 'no-repeat', backgroundSize: 'cover', backgroundBlendMode: 'multiply',
                 }}
             >
@@ -104,6 +76,11 @@ export default function PaginaInicial() {
                     {/* Formulário */}
                     <Box
                         as="form"
+                        onSubmit={(e)=>{
+                                e.preventDefault()
+                                roeamento.push('/chat')
+                            }
+                        }
                         styleSheet={{
                             display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
                             width: { xs: '100%', sm: '50%' }, textAlign: 'center', marginBottom: '32px',
@@ -111,10 +88,18 @@ export default function PaginaInicial() {
                     >
                         <Titulo tag="h2">Boas vindas de volta!</Titulo>
                         <Text variant="body3" styleSheet={{ marginBottom: '32px', color: appConfig.theme.colors.neutrals[300] }}>
-                            {appConfig.name}
+                            Discord - Alura Matrix
                         </Text>
 
                         <TextField
+                            value={username}
+                            onChange={(e) => {
+                                    const valor = e.target.value
+                                    if(valor.length > 1){
+                                        setUsername(valor)
+                                    }
+                                }
+                            }
                             fullWidth
                             textFieldColors={{
                                 neutral: {
@@ -161,7 +146,7 @@ export default function PaginaInicial() {
                                 borderRadius: '50%',
                                 marginBottom: '16px',
                             }}
-                            src={`https://github.com/${username}.png`}
+                            src={`https://github.com/${username}.png` || ''}
                         />
                         <Text
                             variant="body4"
