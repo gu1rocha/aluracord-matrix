@@ -1,3 +1,5 @@
+import Head from 'next/head';
+
 
 function GlobalStyle() {
     return (
@@ -26,13 +28,22 @@ function GlobalStyle() {
       /* ./App fit Height */ 
     `}</style>
     );
-  }
-  
-  export default function CustomApp({ Component, pageProps }) {
+};
+
+const Page = (props) => (
+    <>
+        <Head>
+            <link rel="icon" type="image/x-icon" href="/static/favicon.ico" />
+        </Head>
+    </>
+);
+
+export default function CustomApp({ Component, pageProps }) {
     return (
         <>
+            <Page />
             <GlobalStyle />
             <Component {...pageProps} />
         </>
-    );
-  }
+    )
+}

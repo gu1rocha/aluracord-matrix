@@ -1,16 +1,7 @@
 import { Box, Button, Text, TextField, Image } from '@skynexui/components';
 import appConfig from '../config.json';
 import { useRouter } from 'next/router';
-import Head from 'next/head';
 import React from 'react';
-
-const Page = (props) => (
-    <>
-        <Head>
-            <link rel="icon" type="image/x-icon" href="/static/favicon.ico" />
-        </Head>
-    </>
-);
 
 function Titulo(props) {
     const Texto = props.children
@@ -27,29 +18,12 @@ function Titulo(props) {
     )
 }
 
-// function HomePage() {
-//     return (<div>
-
-//         <Titulo tag='h1'>Boas vindas de volta!</Titulo>
-//         <Titulo tag='h2'>Discord - Alura Matrix</Titulo>
-//         <style jsx>{`
-//             h1{
-//                 color: red;
-//             }
-//         `}
-//         </style>
-//     </div>)
-// }
-
-// export default HomePage
-
 export default function PaginaInicial() {
     const [username, setUsername] = React.useState('gu1rocha');
     const roeamento = useRouter();
 
     return (
         <>
-            <Page />
             <Box
                 styleSheet={{
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
