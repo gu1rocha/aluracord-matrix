@@ -2,22 +2,48 @@ import { Box, Text, TextField, Image, Button } from '@skynexui/components';
 import { createClient } from '@supabase/supabase-js';
 import React from 'react';
 import appConfig from '../config.json';
+import { useRouter } from 'next/router';
+import { ButtonSendSticker } from '../src/components/ButtonSendSticker';
 
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzMxOTkxNCwiZXhwIjoxOTU4ODk1OTE0fQ.FykaUWyJ9pOVYmkgd-FL8w7mAK3HXKCk2Y2B9_OF6DQ';
 const SUPABASE_URL = 'https://aoiphdpjgywrwrhumypm.supabase.co';
 const SUPABASECLIENT = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+function escutaMensagensEmTempoReal(adicionaMensagem) {
+    return SUPABASECLIENT
+        .from('mensagens')
+        .on('INSERT', (respostaLive) => {
+            adicionaMensagem(respostaLive.new);
+        })
+        .subscribe();
+}
+
 export default function PaginaDoChat() {
+    const roeamento = useRouter();
+    const usuarioLogado = roeamento.query.username;
     const [mensagem, setMensagem] = React.useState('');
     const [listaDeMensagens, setListaDeMensagens] = React.useState([]);
 
-    React.useEffect(()=>{
-        SUPABASECLIENT.from('mensagens').select('*').order('id',{ascending:false}).then(({data})=>{setListaDeMensagens(data)});
-    },[])
+    React.useEffect(() => {
+        SUPABASECLIENT.from('mensagens').select('*').order('id', { ascending: false }).then(({ data }) => { setListaDeMensagens(data) });
+        escutaMensagensEmTempoReal((novaMensagem) => {
+            setListaDeMensagens((valorAtualDaLista) => {
+              console.log('valorAtualDaLista:', valorAtualDaLista);
+              return [
+                novaMensagem,
+                ...valorAtualDaLista,
+              ]
+            });
+          });
+      
+          return () => {
+            subscription.unsubscribe();
+          }
+    }, [])
     function handleNovaMensagem(novaMensagem) {
         const mensagem = {
             //id: listaDeMensagens.length + 1,
-            de: 'gu1rocha',
+            de: usuarioLogado,
             texto: novaMensagem,
         };
         SUPABASECLIENT
@@ -25,17 +51,8 @@ export default function PaginaDoChat() {
             .insert([
                 mensagem
             ])
-            .then(({data})=>{
-                setListaDeMensagens([
-                    data[0],
-                    ...listaDeMensagens,
-                ]);
-            }
-        )
-        // setListaDeMensagens([
-        //     mensagem,
-        //     ...listaDeMensagens,
-        // ]);
+            .then(({ data }) => {}
+            )
         setMensagem('');
     }
     return (
@@ -108,6 +125,10 @@ export default function PaginaDoChat() {
                                 color: appConfig.theme.colors.neutrals[200],
                             }}
                         />
+                        <ButtonSendSticker
+                            onStickerClick={(sticker) => {
+                                handleNovaMensagem(':sticker: ' + sticker);
+                            }} />
                     </Box>
                 </Box>
             </Box>
@@ -169,13 +190,13 @@ function MessageList(props) {
                                 tabIndex={1}
                                 onMouseOver={(e) => {
                                     if (e.currentTarget === e.target) {
-                                    console.log('focos dele');
+                                        console.log('focos dele');
                                     } else {
-                                    console.log('focus no elemento filho', e.target);
+                                        console.log('focus no elemento filho', e.target);
                                     }
                                     if (!e.currentTarget.contains(e.relatedTarget)) {
-                                    // Não acionado ao trocar o foco entre os elementos filhos
-                                    console.log('foco entrou no proprio elemento');
+                                        // Não acionado ao trocar o foco entre os elementos filhos
+                                        console.log('foco entrou no proprio elemento');
                                     }
                                 }}
                                 styleSheet={{
@@ -201,7 +222,13 @@ function MessageList(props) {
                                 {(new Date().toLocaleDateString())}
                             </Text>
                         </Box>
-                        {mensagem.texto}
+                        {mensagem.texto.startsWith(':sticker:')
+                            ? (
+                                <Image src={mensagem.texto.replace(':sticker:', '')} />
+                            )
+                            : (
+                                mensagem.texto
+                            )}
                     </Text>
                 );
             })}

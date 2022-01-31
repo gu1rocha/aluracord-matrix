@@ -52,7 +52,7 @@ export default function PaginaInicial() {
                         as="form"
                         onSubmit={(e)=>{
                                 e.preventDefault()
-                                roeamento.push('/chat')
+                                roeamento.push(`/chat?username=${username}`)
                             }
                         }
                         styleSheet={{
